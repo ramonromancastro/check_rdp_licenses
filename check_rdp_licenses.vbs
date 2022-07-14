@@ -21,7 +21,7 @@ Option Explicit
 ' NAGIOS PLUGINS CODE
 ' -----------------------------------------------------------------------
 
-Const VERSION = "0.9"
+Const VERSION = "0.10"
 Const nagios_OK = 0
 Const nagios_WARNING = 1
 Const nagios_CRITICAL = 2
@@ -30,7 +30,7 @@ Const nagios_UNKNOWN = 3
 Const plugin_ignoreTemporaryWarnings = true
 
 Dim nagios_return_message:nagios_return_message = Array("OK", "WARNING", "CRITICAL", "UNKNOWN")
-Dim nagios_return_code:nagios_return_code = nagios_UNKNOWN
+Dim nagios_return_code:nagios_return_code = nagios_OK
 Dim nagios_message:nagios_message = ""
 Dim nagios_perf:nagios_perf = ""
 Dim nagios_threshold_warning:nagios_threshold_warning = 80
@@ -72,6 +72,8 @@ Sub set_nagios_return_code(return_code)
 		nagios_return_code = nagios_WARNING
 	ElseIf (return_code = nagios_UNKNOWN) And (nagios_return_code <> nagios_CRITICAL) AND (nagios_return_code <> nagios_WARNING) Then
 		nagios_return_code = nagios_UNKNOWN
+	ElseIf (return_code = nagios_OK) And (nagios_return_code <> nagios_CRITICAL) AND (nagios_return_code <> nagios_WARNING) AND (nagios_return_code <> nagios_UNKNOWN) Then
+		nagios_return_code = nagios_OK
 	End If
 End Sub
 
@@ -226,7 +228,7 @@ Select Case get_nagios_return_code
 	Case nagios_CRITICAL
 		prefix_nagios_message "One or more license key packs are in critical state"
 	Case nagios_UNKNOWN
-		suffix_nagios_message "Unable to obtain License Key Pack information." 
+		prefix_nagios_message "Unable to obtain License Key Pack information." 
 End Select
  
 nagios_exit
